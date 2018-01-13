@@ -1,0 +1,48 @@
+pragma solidity ^0.4.14;
+contract Payroll{
+    address owner;
+    uint salary;
+    address employee;
+    uint constant payDuration=10 seconds;
+    uint lastPayDay;
+    
+    function updateEmployee(address e,uint s){
+        if(msg.sender!=owner){
+            revert();
+        }
+       if(employee!=0x0){
+            uint payment=salary*(now-lastPayDay)/payDuration;
+            employee.transfer(payment);
+        }
+        employee=e;
+        salary=s;
+        lastPayDay=now;
+    }
+    
+    function addFund() payable returns (uint) {
+        return this.balance;
+    }
+   
+    
+    function calculateRunway() returns (uint) {
+        return this.balance/salary;
+    }
+    function hasEnoughFund() returns (bool) {
+       // return this.balance >= salary;
+       return calculateRunway() >= 0;
+    }
+    function getPaid(){
+        if(msg.sender!=owner){
+            revert();
+        }
+
+        uint nextPayDay=lastPayDay+payDuration;
+        if (nextPayDay>now){
+           revert();
+        }
+        
+        lastPayDay=nextPayDay;
+        frank.transfer(salary);
+       
+    }
+}
